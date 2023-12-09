@@ -95,8 +95,8 @@ while running:
         laser['rect'].y -= 8  # Muovi il laser verso l'alto
         if laser['rect'].bottom <= 0:
             laser['active'] = False
-            if not laser['active']:
-                lasers.pop(index)
+            #if not laser['active']:
+            lasers.pop(index)
         else:
             index += 1
 
@@ -111,7 +111,7 @@ while running:
 
     # Update the display
     pygame.display.flip()
-    
+
 
 # Quit Pygame
 pygame.quit()
