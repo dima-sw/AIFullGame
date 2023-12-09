@@ -25,7 +25,6 @@ Contributions to enhance gameplay mechanics, improve AI-generated elements, or a
 ## Acknowledgements
 This project was created using AI-based code generation with supervision and guidance.
 
-## License
-[Your chosen license]
+
 
 
