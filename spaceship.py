@@ -10,11 +10,13 @@ class Spaceship:
         self.screenHeight = screen_height
         self.x = screen_width // 2 - self.width // 2
         self.y = screen_height // 2 - self.height // 2
-        self.speed = 5
-        self.fire_rate = 0.5
+        self.speed = 10
+        self.fire_rate = 0.3
         self.last_shot = 0  # Time tracking for shooting
         self.lasers = []
         self.frame_count = 0
+        self.life = 100
+        self.attack = 50
 
 
     def draw(self, screen):
@@ -70,7 +72,7 @@ class Spaceship:
         for laser in self.lasers:
             if laser['active']:
                 pygame.draw.rect(self.screen, (255, 255, 255), laser['rect'])
-                laser['rect'].y -= 8
+                laser['rect'].y -= 12
                 if laser['rect'].bottom > 0:
                     updated_lasers.append(laser)
         self.lasers = updated_lasers
@@ -81,4 +83,23 @@ class Spaceship:
         self.fire_laser()
         self.update_lasers()
         self.draw(self.screen)
+    
+    def check_collisions(self, enemies):
+        for enemy in enemies:
+            for laser in enemy.lasers:
+                if laser['active'] and self.x < laser['rect'].x + laser['rect'].width < self.x + self.width \
+                        and self.y < laser['rect'].y + laser['rect'].height < self.y + self.height:
+                    self.life -= enemy.attack  # Reduce spaceship's life upon collision with enemy's laser
+                    laser['active'] = False  # Deactivate the enemy's laser upon collision
+    def draw_health_bar(self, screen):
+        # Calculate health bar width based on player's remaining life
+        health_bar_width_white = 200 * (self.life / 100)  # Width for the white portion
+        health_bar_width_red = 200 - health_bar_width_white  # Width for the red portion
+
+        # Draw the white portion representing the remaining health
+        pygame.draw.rect(screen, (255, 255, 255), (600, 20, health_bar_width_white, 10))
+
+        # Draw the red portion for depleted health
+        pygame.draw.rect(screen, (255, 0, 0), (600 + health_bar_width_white, 20, health_bar_width_red, 10))
+
 
