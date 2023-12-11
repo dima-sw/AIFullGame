@@ -13,8 +13,11 @@ class Enemy:
         self.screen_height = screen_height
         self.x = x
         self.y = y
-        self.speed = random.uniform(2, 7) 
-        self.fire_rate = random.uniform(0.2, 1.5) 
+        if random.uniform(-1, 1)>=0:
+            self.speed = random.uniform(2, 7)
+        else:
+            self.speed = random.uniform(-7, -2)
+        self.fire_rate = random.uniform(0.1, 3) 
         self.last_shot = 0
         self.lasers = []
         self.frame_count = 0
@@ -101,12 +104,13 @@ class Enemy:
 
 
 class EnemyWave:
-    def __init__(self, screen_width, screen_height, screen,spaceship):
+    def __init__(self, screen_width, screen_height, screen,spaceship, game):
         self.enemies = []
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.screen=screen
         self.spaceship = spaceship  # Pass the spaceship object
+        self.game= game
         self.spawn_wave()
 
     def spawn_wave(self):
@@ -144,6 +148,7 @@ class EnemyWave:
                 self.enemies.remove(enemy)
             if enemy.handle_collision(self.spaceship):
                 self.enemies.remove(enemy)
+                self.game.update_score(enemy)
 
         #for enemy in enemies_to_remove:
             

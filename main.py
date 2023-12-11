@@ -1,6 +1,7 @@
 import sys
 import pygame
 from enemy import Enemy, EnemyWave
+from game import Game
 from spaceship import Spaceship
 
 def run_game():
@@ -12,9 +13,10 @@ def run_game():
     #enemy = Enemy(WIDTH, HEIGHT, screen)
     running = True
     clock = pygame.time.Clock()
+    game=Game()
     #enemies = [Enemy(WIDTH, HEIGHT, screen) for _ in range(1)]  # Create multiple enemies
     # Inside the main game loop:
-    enemy_wave = EnemyWave(WIDTH, HEIGHT, screen, spaceship)  # Pass your screen width and height variables here
+    enemy_wave = EnemyWave(WIDTH, HEIGHT, screen, spaceship, game)  # Pass your screen width and height variables here
     while running:
         screen.fill((0, 0, 0))
 
@@ -31,6 +33,7 @@ def run_game():
             enemy.draw(screen)
 
         spaceship.check_collisions(enemy_wave.enemies)
+        game.display_score(screen)  # Display the score on the screen
 
         pygame.display.flip()
 
