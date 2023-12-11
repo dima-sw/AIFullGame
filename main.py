@@ -27,7 +27,7 @@ def run_game():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 if play_rect.collidepoint(mouse_pos):
-                    start_game()
+                    start_game(game)
                 elif quit_rect.collidepoint(mouse_pos):
                     running = False
 
@@ -40,7 +40,7 @@ def run_game():
     sys.exit()
 
 
-def start_game():
+def start_game(game):
     pygame.init()
     WIDTH, HEIGHT = 800, 600
     screen = pygame.display.set_mode((800, 600))
@@ -48,7 +48,8 @@ def start_game():
     spaceship = Spaceship(WIDTH, HEIGHT,screen)
     running = True
     clock = pygame.time.Clock()
-    game = Game()  # Initialize the game
+    #game = Game(spaceship)  # Initialize the game
+    game.spaceship = spaceship
     enemy_wave = EnemyWave(WIDTH, HEIGHT, screen, spaceship, game)  # Pass your screen width and height variables here
     
     while running:
@@ -58,14 +59,17 @@ def start_game():
             if event.type == pygame.QUIT:
                 running = False
 
-        # Your game logic goes here...
         spaceship.handle_input()       
         spaceship.draw_health_bar(screen)
         enemy_wave.update()
         for enemy in enemy_wave.enemies:
             enemy.draw(screen)
 
-        spaceship.check_collisions(enemy_wave.enemies)
+        if(spaceship.check_collisions(enemy_wave.enemies) <=0):
+            game.display_name_input(screen)  # Display the name input menu
+            running=False
+
+
         game.display_score(screen)  # Display the score on the screen
 
         pygame.display.flip()
@@ -73,10 +77,8 @@ def start_game():
         clock.tick(60)  # Cap the frame rate to 60 FPS
 
         pygame.display.flip()
-        clock.tick(60)
 
-    pygame.quit()
-    sys.exit()
+
 
 if __name__ == "__main__":
     run_game()

@@ -16,6 +16,8 @@ class Spaceship:
         self.lasers = []
         self.frame_count = 0
         self.life = 100
+        self.max_life = 100
+        self.hearts = 3
         self.attack = 50
 
 
@@ -91,6 +93,10 @@ class Spaceship:
                         and self.y < laser['rect'].y + laser['rect'].height < self.y + self.height:
                     self.life -= enemy.attack  # Reduce spaceship's life upon collision with enemy's laser
                     laser['active'] = False  # Deactivate the enemy's laser upon collision
+                    if self.life <= 0:
+                        self.hearts -= 1
+                        self.life = self.max_life  # Reset life to 100%
+        return self.hearts
     def draw_health_bar(self, screen):
         # Calculate health bar width based on player's remaining life
         health_bar_width_white = 200 * (self.life / 100)  # Width for the white portion
@@ -101,5 +107,27 @@ class Spaceship:
 
         # Draw the red portion for depleted health
         pygame.draw.rect(screen, (255, 0, 0), (600 + health_bar_width_white, 20, health_bar_width_red, 10))
+        self.draw_hearts(screen)
+    
+    def draw_hearts(self, screen):
+        heart_color = (255, 0, 0)
+        heart_size = 20
+        heart_padding = 10
+        heart_spacing = 30
+        start_x = 10
+        start_y = 50
 
+        for i in range(self.hearts):
+            heart_x = start_x + (heart_size + heart_padding + heart_spacing) * i
 
+            # Draw the left half of the heart (rotated triangle)
+            triangle_points = [
+                (heart_x + heart_size // 15, start_y + heart_size // 3),
+                (heart_x + 3 * heart_size // 3, start_y + heart_size // 3),
+                (heart_x + heart_size // 2, start_y + heart_size)
+            ]
+            pygame.draw.polygon(screen, heart_color, triangle_points)
+
+            # Draw the right half of the heart (circles)
+            pygame.draw.circle(screen, heart_color, (heart_x + heart_size // 4, start_y + heart_size // 4), heart_size // 4)
+            pygame.draw.circle(screen, heart_color, (heart_x + 3 * heart_size // 4, start_y + heart_size // 4), heart_size // 4)

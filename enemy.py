@@ -25,6 +25,7 @@ class Enemy:
         self.triangle_color = (255, 0, 0)  # Red color for the triangles
         self.life = 100
         self.attack = 10
+        self.yDown = 40
         
 
     # Methods for drawing, moving, firing lasers, and updating lasers (similar to Spaceship class)
@@ -58,7 +59,7 @@ class Enemy:
         self.x += self.speed
         if self.x <= 0 or self.x >= self.screen_width - self.width:
             self.speed = -self.speed
-            self.y += 20  # Move down when changing direction
+            self.y += self.yDown # Move down when changing direction
 
         # Ensure the enemy stays within screen boundaries
         self.x = max(0, min(self.x, self.screen_width - self.width))
@@ -89,8 +90,8 @@ class Enemy:
         self.update_lasers()
         self.draw(self.screen)
     def off_screen(self, screen_width, screen_height):
-        return self.x < 0 or self.x > screen_width or self.y < 0 or self.y > screen_height
-
+        #return self.x < 0 or self.x > screen_width or self.y < 0 or self.y > screen_height
+        return self.y > screen_height
     def handle_collision(self, spaceship):
         player_attack = spaceship.attack # Get the player's attack value
         player_lasers = spaceship.lasers  # Get the player's lasers
@@ -143,7 +144,6 @@ class EnemyWave:
             enemy.move()
             enemy.fire_laser()
             enemy.update_lasers()  # Add this line to update enemy lasers
-
             if enemy.off_screen(self.screen_width, self.screen_height):
                 self.enemies.remove(enemy)
             if enemy.handle_collision(self.spaceship):
