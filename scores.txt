@@ -1,4 +1,3 @@
-: 248
-Dimitri: 963
-pollon: 361
-meh: 377
+Dimitri: 3076
+Ale: 2503
+Test: 1900

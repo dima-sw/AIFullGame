@@ -28,6 +28,7 @@ def run_game():
                 mouse_pos = pygame.mouse.get_pos()
                 if play_rect.collidepoint(mouse_pos):
                     start_game(game)
+                    game=Game()
                 elif quit_rect.collidepoint(mouse_pos):
                     running = False
 

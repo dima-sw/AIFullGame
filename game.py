@@ -7,6 +7,8 @@ class Game:
         # Other existing code...
         self.score = 0  # Initialize score to zero
         self.scoreToHeart = 100
+        self.scores = []  # List to hold loaded scores
+        self.load_scores()
 
 
     def update_score(self, enemy):
@@ -17,7 +19,16 @@ class Game:
         self.score += int(enemy_score)  # Increment the score
         if self.score >= self.scoreToHeart:
             self.spaceship.hearts += 1
-            self.scoreToHeart+=(self.scoreToHeart/2)
+            self.scoreToHeart+=(self.scoreToHeart)
+    def load_scores(self):
+        # Load the scores from a file, parse them, and store them in self.scores
+        with open("scores.txt", "r") as file:
+            lines = file.readlines()
+            # Process lines to extract scores, sort, and select the top 20
+            # Example: scores should be a list of tuples (name, score)
+            self.scores = [(name, int(score)) for line in lines for name, score in [line.split(":")]]
+            self.scores.sort(key=lambda x: x[1], reverse=True)
+            self.scores = self.scores[:20]
 
     def display_score(self, screen):
         font = pygame.font.SysFont(None, 36)
@@ -40,6 +51,7 @@ class Game:
         # Display buttons on the screen
         screen.blit(play_text, play_rect)
         screen.blit(quit_text, quit_rect)
+        self.display_scores(screen)
 
         return play_rect, quit_rect
     def display_name_input(self, screen):
@@ -81,3 +93,28 @@ class Game:
     def save_score(self, name, score):
         with open("scores.txt", "a") as file:
             file.write(f"{name}: {score}\n")
+    def display_scores(self, screen):
+        font = pygame.font.SysFont(None, 24)  # Adjust the font size
+
+        # Calculate the position for displaying the label
+        label_font = pygame.font.SysFont(None, 36)
+        label_text = label_font.render("Top 20 Best Scores", True, (255, 255, 255))
+        label_rect = label_text.get_rect(center=(screen.get_width() // 2, 30))  # Top center position
+
+        # Display the label
+        screen.blit(label_text, label_rect)
+
+        # Calculate the position for displaying scores
+        start_y = 70  # Below the label
+        column_width = screen.get_width() // 4  # Divide the width into 4 columns
+
+        max_scores_per_column = 5  # 5 scores per column
+        max_scores = min(len(self.scores), max_scores_per_column * 4)  # Maximum scores to display
+
+        for i, (name, score) in enumerate(self.scores[:max_scores]):
+            x_position = (i % 4) * column_width
+            y_position = start_y + ((i // 4) * 20)
+
+            score_text = font.render(f"{name}: {score}", True, (255, 255, 255))
+            text_rect = score_text.get_rect(x=x_position, y=y_position)
+            screen.blit(score_text, text_rect)
