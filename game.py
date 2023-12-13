@@ -1,3 +1,4 @@
+import json
 import pygame
 
 
@@ -9,6 +10,7 @@ class Game:
         self.scoreToHeart = 100
         self.scores = []  # List to hold loaded scores
         self.load_scores()
+
 
 
     def update_score(self, enemy):

@@ -1,13 +1,17 @@
+import json
 import math
 import random
 
 import pygame
 
+from powerUp import PowerUp
+
+
 
 class Enemy:
     def __init__(self, screen_width, screen_height, screen,x, y):
         self.screen = screen
-        self.width = 20
+        self.width = 30
         self.height = 20
         self.screen_width = screen_width
         self.screen_height = screen_height
@@ -24,7 +28,7 @@ class Enemy:
         self.ship_color = (255, 255, 255)  # White color for the rectangle
         self.triangle_color = (255, 0, 0)  # Red color for the triangles
         self.life = 100
-        self.attack = 10
+        self.attack = 15
         self.yDown = 40
         
 
@@ -113,6 +117,10 @@ class EnemyWave:
         self.spaceship = spaceship  # Pass the spaceship object
         self.game= game
         self.spawn_wave()
+        self.PowerUps = None
+        self.load_powerups()
+        self.power_ups=[]
+        self.chancePowerUp=100
 
     def spawn_wave(self):
         # Clear existing enemies
@@ -147,11 +155,36 @@ class EnemyWave:
             if enemy.off_screen(self.screen_width, self.screen_height):
                 self.enemies.remove(enemy)
             if enemy.handle_collision(self.spaceship):
+                if self.drop_power_up():
+                    self.power_ups.append(self.generate_power_up(enemy))
                 self.enemies.remove(enemy)
                 self.game.update_score(enemy)
+        for power_up in self.power_ups:
+            power_up.update(self.screen)
+            if power_up.apply_effect(self.spaceship):
+                self.power_ups.remove(power_up)
+
+
 
         #for enemy in enemies_to_remove:
             
 
         if len(self.enemies) == 0:
             self.spawn_wave()
+    def load_powerups(self):
+        with open('powerUps.json', 'r') as file:
+            self.PowerUps = json.load(file)["powerups"]
+    def drop_power_up(self):
+        chance = random.randint(1, 100)
+        if chance <= self.chancePowerUp:
+            return True
+        return False
+    def generate_power_up(self, enemy):
+        # Obtain the x and y coordinates from the enemy object
+        x, y = enemy.x, enemy.y
+        # Obtain a random power-up from the available list
+        random_power_up = random.choice(self.PowerUps)
+        # Create a PowerUp object with random attributes and the given x, y coordinates
+        power_up_object = PowerUp( random_power_up,x, y)
+
+        return power_up_object

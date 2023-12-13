@@ -11,14 +11,19 @@ class Spaceship:
         self.x = screen_width // 2 - self.width // 2
         self.y = screen_height // 2 - self.height // 2
         self.speed = 10
-        self.fire_rate = 0.3
+        self.fire_rate = 0.5
+        self.min_fire_rate = 0.05
+        self.max_fire_rate = 1
         self.last_shot = 0  # Time tracking for shooting
         self.lasers = []
         self.frame_count = 0
         self.life = 100
         self.max_life = 100
         self.hearts = 3
-        self.attack = 50
+        self.attack = 100
+        self.laserSpeed = 15
+        self.laserMinSpeed=2
+        self.laserMaxSpeed=20
 
 
     def draw(self, screen):
@@ -74,7 +79,7 @@ class Spaceship:
         for laser in self.lasers:
             if laser['active']:
                 pygame.draw.rect(self.screen, (255, 255, 255), laser['rect'])
-                laser['rect'].y -= 12
+                laser['rect'].y -= self.laserSpeed
                 if laser['rect'].bottom > 0:
                     updated_lasers.append(laser)
         self.lasers = updated_lasers

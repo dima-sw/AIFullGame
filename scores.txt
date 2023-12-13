@@ -1,3 +1,6 @@
 Dimitri: 3076
 Ale: 2503
 Test: 1900
+alone: 5637
+Alone2: 8431
+e: 173
