@@ -13,6 +13,7 @@ The game is a space-themed adventure where players control a spaceship to naviga
 - AI-generated enemy behavior and interactions
 - AI-designed UI elements for a visually appealing game interface
 - Laser firing mechanism with AI-generated logic
+- Powerups
 
 ## Contributions
 Contributions to enhance gameplay mechanics, improve AI-generated elements, or add new features are welcome. Please refer to the contribution guidelines for more details.
