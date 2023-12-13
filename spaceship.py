@@ -20,7 +20,7 @@ class Spaceship:
         self.life = 100
         self.max_life = 100
         self.hearts = 3
-        self.attack = 100
+        self.attack = 25
         self.laserSpeed = 15
         self.laserMinSpeed=2
         self.laserMaxSpeed=20
@@ -104,7 +104,7 @@ class Spaceship:
         return self.hearts
     def draw_health_bar(self, screen):
         # Calculate health bar width based on player's remaining life
-        health_bar_width_white = 200 * (self.life / 100)  # Width for the white portion
+        health_bar_width_white = 200 * (self.life / self.max_life)  # Width for the white portion
         health_bar_width_red = 200 - health_bar_width_white  # Width for the red portion
 
         # Draw the white portion representing the remaining health

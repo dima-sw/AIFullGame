@@ -4,3 +4,5 @@ Test: 1900
 alone: 5637
 Alone2: 8431
 e: 173
+fuck: 667
+po: 3970

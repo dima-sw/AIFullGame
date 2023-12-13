@@ -9,7 +9,7 @@ from powerUp import PowerUp
 
 
 class Enemy:
-    def __init__(self, screen_width, screen_height, screen,x, y):
+    def __init__(self, screen_width, screen_height, screen,x, y, enemyStats):
         self.screen = screen
         self.width = 30
         self.height = 20
@@ -21,14 +21,15 @@ class Enemy:
             self.speed = random.uniform(2, 7)
         else:
             self.speed = random.uniform(-7, -2)
-        self.fire_rate = random.uniform(0.1, 3) 
+        self.fire_rate = enemyStats["fire_rate"]
         self.last_shot = 0
         self.lasers = []
         self.frame_count = 0
         self.ship_color = (255, 255, 255)  # White color for the rectangle
         self.triangle_color = (255, 0, 0)  # Red color for the triangles
-        self.life = 100
-        self.attack = 15
+        self.life = enemyStats["life"]
+        self.max_life=self.life
+        self.attack = enemyStats["attack"]
         self.yDown = 40
         
 
@@ -47,7 +48,7 @@ class Enemy:
         ])
 
         # Calculate health bar width based on enemy's remaining life
-        health_bar_width_white = self.width * (self.life / 100)  # Width for the white portion
+        health_bar_width_white = self.width * (self.life / self.max_life)  # Width for the white portion
         health_bar_width_red = self.width - health_bar_width_white  # Width for the red portion
 
         # Draw the white portion representing the remaining health
@@ -106,6 +107,19 @@ class Enemy:
                 self.life -= player_attack  # Reduce enemy's life upon collision with player's laser
                 laser['active'] = False  # Deactivate the player's laser upon collision
         return self.life <= 0 
+    def modify_attributes(self, percentage_increase):
+        # Adjust fire rate with a minimum value of 0.5
+        if self.fire_rate>0.5:
+            self.fire_rate  = max(0.5, self.fire_rate * (1 - percentage_increase / 100))
+        
+
+        # Increase attack by the given percentage
+        self.attack *= (1 + percentage_increase / 100)
+
+        # Increase life by the given percentage
+        self.life *= (1 + percentage_increase / 100)
+        print(self.life, 1 + percentage_increase / 100, percentage_increase)
+
 
 
 class EnemyWave:
@@ -116,16 +130,28 @@ class EnemyWave:
         self.screen=screen
         self.spaceship = spaceship  # Pass the spaceship object
         self.game= game
-        self.spawn_wave()
+        self.multiplier = 1.0
+        self.stepMulti = 0.1
+        self.percent = 10  
         self.PowerUps = None
-        self.load_powerups()
         self.power_ups=[]
-        self.chancePowerUp=100
+        self.chancePowerUp=65
+
+        self.enemyStats={}
+        self.enemyStats["fire_rate"] = random.uniform(0.6, 3) 
+        self.enemyStats["life"] = 100
+        self.enemyStats["attack"] = 15
+        self.maxFireRate=3
+        self.minFireRate=0.6
+        self.load_powerups()
+        self.spawn_wave()
+        
+
 
     def spawn_wave(self):
         # Clear existing enemies
         self.enemies = []
-
+        
         grid = []
         grid_width = 10
         cell_size = self.screen_width // grid_width
@@ -141,10 +167,16 @@ class EnemyWave:
             while grid[x] != 0:
                 x = random.randint(0, grid_width - 1)
                 y = random.randint(0, self.screen_height // 3)
-
-            enemy = Enemy(self.screen_width, self.screen_height, self.screen, x * cell_size, y)
+            self.enemyStats["fire_rate"] = random.uniform(self.minFireRate, self.maxFireRate) 
+            enemy = Enemy(self.screen_width, self.screen_height, self.screen, x * cell_size, y, self.enemyStats)
             self.enemies.append(enemy)
             grid[x] = 1
+            
+            #enemy.modify_attributes(self.percent * self.multiplier)  # Increase attributes by 5% * multiplier
+            #print(f"Life: {enemy.life}, Attack: {enemy.attack}, Fire Rate: {enemy.fire_rate}")
+        self.powerUp_enemy()
+        #self.multiplier += self.stepMulti
+        
     def update(self):
         
 
@@ -163,10 +195,6 @@ class EnemyWave:
             power_up.update(self.screen)
             if power_up.apply_effect(self.spaceship):
                 self.power_ups.remove(power_up)
-
-
-
-        #for enemy in enemies_to_remove:
             
 
         if len(self.enemies) == 0:
@@ -188,3 +216,14 @@ class EnemyWave:
         power_up_object = PowerUp( random_power_up,x, y)
 
         return power_up_object
+    def powerUp_enemy(self):
+        # Adjust fire rate with a minimum value of 0.5
+        self.maxFireRate  = max(0.5, self.maxFireRate * (1 - self.percent / 100))
+        
+        self.minFireRate= max(0.1, self.minFireRate * (1 - self.percent / 100))
+        # Increase attack by the given percentage
+        self.enemyStats["attack"] *= (1 + self.percent / 100)
+
+        # Increase life by the given percentage
+        self.enemyStats["life"] *= (1 + self.percent / 100)
+        print(self.enemyStats["life"], 1 + self.percent / 100, self.percent)
